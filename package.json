@@ -2,11 +2,17 @@
   "name": "vite-node",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "type": "commonjs",
   "scripts": {
-    "dev": "nodemon --watch src --exec \"esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.js && node dist/index.js\"",
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --outfile=dist/index.js",
-    "start": "node dist/index.js"
+    "clean": "pnpm exec rimraf dist",
+    "check-types": "tsc --noEmit",
+    "build:prod": "cross-env NODE_ENV=production node esbuild.config.js",
+    "build": "pnpm run clean && pnpm run check-types && pnpm run build:prod",
+    "start": "node dist/index.js",
+    "watch:build": "node esbuild.config.js",
+    "watch:server": "nodemon dist/index.js --watch dist --delay 1",
+    "dev": "pnpm run clean && pnpm run check-types && concurrently \"pnpm:watch:build\" \"pnpm:watch:server\""
   },
   "keywords": [],
   "author": "",
@@ -15,12 +21,15 @@
   "dependencies": {
     "axios": "1.8.4",
     "dotenv": "16.5.0"
-
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
     "esbuild": "0.25.2",
     "nodemon": "3.1.9",
+    "rimraf": "^5.0.7",
+    "tsx": "^4.19.3",
     "typescript": "5.8.3"
   }
 }
